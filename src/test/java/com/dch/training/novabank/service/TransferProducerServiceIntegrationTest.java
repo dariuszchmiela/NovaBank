@@ -38,12 +38,13 @@ public class TransferProducerServiceIntegrationTest {
     private static final BigDecimal AMOUNT = new BigDecimal("250.00");
     private static final String CURRENCY = "PLN";
     private static final Duration POLL_TIMEOUT = Duration.ofSeconds(10);
-
-    private KafkaConsumer<String, String> testConsumer;
     @Autowired
     private TransferProducerService transferProducerService;
+
     @Autowired
     private KafkaTopicsProperties kafkaTopicsProperties;
+
+    private KafkaConsumer<String, String> testConsumer;
 
     @BeforeEach
     void setUpConsumer() {
@@ -55,7 +56,7 @@ public class TransferProducerServiceIntegrationTest {
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 
         testConsumer = new KafkaConsumer<>(consumerProperties);
-        testConsumer.subscribe(List.of(transferRequestedTopic));
+        testConsumer.subscribe(List.of(kafkaTopicsProperties.transferRequested()));
     }
 
     @AfterEach
@@ -79,9 +80,12 @@ public class TransferProducerServiceIntegrationTest {
     private ConsumerRecord<String, String> pollForRecordWithKey(String expectedKey) {
         ConsumerRecords<String, String> records = testConsumer.poll(POLL_TIMEOUT);
 
-        return records.records(transferRequestedTopic).stream()
-                .filter(record -> expectedKey.equals(record.key()))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("No record found with key " + expectedKey));
+        for (ConsumerRecord<String, String> record : records.records(kafkaTopicsProperties.transferRequested())) {
+            if (expectedKey.equals(record.key())) {
+                return record;
+            }
+        }
+
+        throw new AssertionError("No record found with key " + expectedKey);
     }
 }
