@@ -36,6 +36,8 @@ public class TransferProducerServiceIntegrationTest {
     private static final BigDecimal AMOUNT = new BigDecimal("250.00");
     private static final String CURRENCY = "PLN";
     private static final Duration POLL_TIMEOUT = Duration.ofSeconds(10);
+    
+    private KafkaConsumer<String, String> testConsumer;
     @Autowired
     private TransferProducerService transferProducerService;
     @Autowired
