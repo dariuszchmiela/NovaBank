@@ -1,4 +1,4 @@
-package com.dch.treining.novabank.config;
+package com.dch.training.novabank.config;
 
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;

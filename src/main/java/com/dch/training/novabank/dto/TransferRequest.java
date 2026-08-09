@@ -1,4 +1,4 @@
-package com.dch.treining.novabank.dto;
+package com.dch.training.novabank.dto;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;

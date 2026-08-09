@@ -1,4 +1,4 @@
-package com.dch.treining.novabank;
+package com.dch.training.novabank;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

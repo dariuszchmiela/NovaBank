@@ -1,4 +1,4 @@
-package com.dch.treining.novabank;
+package com.dch.training.novabank;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package com.dch.treining.novabank.exception;
+package com.dch.training.novabank.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
