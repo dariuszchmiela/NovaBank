@@ -1,8 +1,8 @@
-package com.dch.trining.novabank.service;
+package com.dch.treining.novabank.service;
 
-import com.dch.trining.novabank.config.KafkaTopicsProperties;
-import com.dch.trining.novabank.dto.TransferRequest;
-import com.dch.trining.novabank.event.TransferRequestedEvent;
+import com.dch.treining.novabank.config.KafkaTopicsProperties;
+import com.dch.treining.novabank.dto.TransferRequest;
+import com.dch.treining.novabank.event.TransferRequestedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;

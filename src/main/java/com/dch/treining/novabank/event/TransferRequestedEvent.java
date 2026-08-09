@@ -1,4 +1,4 @@
-package com.dch.trining.novabank.event;
+package com.dch.treining.novabank.event;
 
 import java.math.BigDecimal;
 import java.time.Instant;

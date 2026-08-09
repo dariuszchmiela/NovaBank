@@ -1,4 +1,4 @@
-package com.dch.trining.novabank.config;
+package com.dch.treining.novabank.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ApiVersionConfigurer;

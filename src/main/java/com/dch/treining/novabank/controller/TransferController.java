@@ -1,7 +1,7 @@
-package com.dch.trining.novabank.controler;
+package com.dch.treining.novabank.controller;
 
-import com.dch.trining.novabank.dto.TransferRequest;
-import com.dch.trining.novabank.service.TransferProducerService;
+import com.dch.treining.novabank.dto.TransferRequest;
+import com.dch.treining.novabank.service.TransferProducerService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

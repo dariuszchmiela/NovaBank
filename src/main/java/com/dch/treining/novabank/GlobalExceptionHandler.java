@@ -1,4 +1,4 @@
-package com.dch.trining.novabank;
+package com.dch.treining.novabank;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
