@@ -6,10 +6,12 @@ import com.dch.trining.novabank.event.TransferRequestedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.UUID;
 
+@Service
 public class TransferProducerService {
     private static final Logger log = LoggerFactory.getLogger(TransferProducerService.class);
 
@@ -30,7 +32,7 @@ public class TransferProducerService {
         kafkaTemplate.send(kafkaTopicsProperties.transferRequested(), partitionKey, event);
         return event.transferId();
     }
-    
+
     private TransferRequestedEvent buildEvent(TransferRequest request) {
         return new TransferRequestedEvent(
                 UUID.randomUUID().toString(),
