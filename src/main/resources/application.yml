@@ -5,3 +5,8 @@ spring:
       acks: all
       properties:
         enable.idempotence: true
+
+novabank:
+  kafka:
+    topics:
+      transfer-requested: bank.transfers.requested
