@@ -24,6 +24,7 @@ class TransferProducerServiceTest {
     private static final BigDecimal AMOUNT = new BigDecimal("150.00");
     private static final String CURRENCY = "PLN";
     private static final String TRANSFER_REQUESTED_TOPIC = "bank.transfers.requested";
+    private static final String TRANSFER_REQUESTED_DLT_TOPIC = "bank.transfers.requested.dlt";
 
     @Mock
     private KafkaTemplate<String, Object> kafkaTemplate;
@@ -31,7 +32,8 @@ class TransferProducerServiceTest {
     @Test
     void publishTransferRequested() {
         // given
-        KafkaTopicsProperties kafkaTopicsProperties = new KafkaTopicsProperties(TRANSFER_REQUESTED_TOPIC);
+        KafkaTopicsProperties kafkaTopicsProperties =
+                new KafkaTopicsProperties(TRANSFER_REQUESTED_TOPIC, TRANSFER_REQUESTED_DLT_TOPIC);
         TransferProducerService transferProducerService = new TransferProducerService(kafkaTemplate, kafkaTopicsProperties);
         TransferRequest request = new TransferRequest(SOURCE_ACCOUNT_ID, TARGET_ACCOUNT_ID, AMOUNT, CURRENCY);
         // when
