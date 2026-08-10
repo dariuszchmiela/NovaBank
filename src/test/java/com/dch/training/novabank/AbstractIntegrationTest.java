@@ -5,6 +5,7 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.kafka.ConfluentKafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @SpringBootTest
@@ -12,9 +13,13 @@ import org.testcontainers.utility.DockerImageName;
 public abstract class AbstractIntegrationTest {
 
     private static final String POSTGRES_IMAGE = "postgres:18-alpine";
-
     @Container
     @ServiceConnection
-    static final PostgreSQLContainer<?> POSTGRES_CONTAINER =
+    protected static final PostgreSQLContainer<?> POSTGRES_CONTAINER =
             new PostgreSQLContainer<>(DockerImageName.parse(POSTGRES_IMAGE));
+    private static final String KAFKA_IMAGE = "confluentinc/cp-kafka:7.6.1";
+    @Container
+    @ServiceConnection
+    protected static final ConfluentKafkaContainer KAFKA_CONTAINER =
+            new ConfluentKafkaContainer(DockerImageName.parse(KAFKA_IMAGE));
 }

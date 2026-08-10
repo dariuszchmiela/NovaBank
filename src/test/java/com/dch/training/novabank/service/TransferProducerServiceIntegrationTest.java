@@ -12,10 +12,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.kafka.ConfluentKafkaContainer;
-import org.testcontainers.utility.DockerImageName;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -24,13 +20,8 @@ import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+class TransferProducerServiceIntegrationTest extends AbstractIntegrationTest {
 
-public class TransferProducerServiceIntegrationTest extends AbstractIntegrationTest {
-
-    @Container
-    @ServiceConnection
-    static final ConfluentKafkaContainer KAFKA_CONTAINER =
-            new ConfluentKafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.1"));
     private static final String SOURCE_ACCOUNT_ID = "ACC-SOURCE-IT";
     private static final String TARGET_ACCOUNT_ID = "ACC-TARGET-IT";
     private static final BigDecimal AMOUNT = new BigDecimal("250.00");
