@@ -29,3 +29,4 @@ novabank:
   kafka:
     topics:
       transfer-requested: bank.transfers.requested
+      transfer-requested-dlt: bank.transfers.requested.dlt

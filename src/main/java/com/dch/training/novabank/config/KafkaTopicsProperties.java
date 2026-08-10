@@ -8,6 +8,9 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public record KafkaTopicsProperties(
         @NotBlank
-        String transferRequested
+        String transferRequested,
+
+        @NotBlank
+        String transferRequestedDlt
 ) {
 }

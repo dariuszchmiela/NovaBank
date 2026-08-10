@@ -1,5 +1,6 @@
 package com.dch.training.novabank.config;
 
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaOperations;
@@ -14,8 +15,12 @@ public class KafkaErrorHandlingConfig {
     private static final long MAX_RETRY_ATTEMPTS = 3L;
 
     @Bean
-    public DefaultErrorHandler defaultErrorHandler(KafkaOperations<Object, Object> kafkaOperations) {
-        DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(kafkaOperations);
+    public DefaultErrorHandler defaultErrorHandler(KafkaOperations<Object, Object> kafkaOperations,
+                                                   KafkaTopicsProperties kafkaTopicsProperties) {
+        DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(kafkaOperations,
+                (consumerRecord, exception) ->
+                        new TopicPartition(kafkaTopicsProperties.transferRequestedDlt(), consumerRecord.partition()));
+
         FixedBackOff backOff = new FixedBackOff(RETRY_INTERVAL_MS, MAX_RETRY_ATTEMPTS);
 
         return new DefaultErrorHandler(recoverer, backOff);
