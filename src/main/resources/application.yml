@@ -6,6 +6,15 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         enable.idempotence: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/novabank
+    username: novabank
+    password: novabank
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
 
 novabank:
   kafka:
