@@ -1,10 +1,8 @@
 package com.dch.training.novabank;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class NovaBankApplicationTests {
+class NovaBankApplicationTests extends AbstractIntegrationTest {
 
     @Test
     void contextLoads() {

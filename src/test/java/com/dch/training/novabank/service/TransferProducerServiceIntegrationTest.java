@@ -1,5 +1,6 @@
 package com.dch.training.novabank.service;
 
+import com.dch.training.novabank.AbstractIntegrationTest;
 import com.dch.training.novabank.config.KafkaTopicsProperties;
 import com.dch.training.novabank.dto.TransferRequest;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -11,10 +12,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.kafka.ConfluentKafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -25,9 +24,8 @@ import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@Testcontainers
-public class TransferProducerServiceIntegrationTest {
+
+public class TransferProducerServiceIntegrationTest extends AbstractIntegrationTest {
 
     @Container
     @ServiceConnection
@@ -38,6 +36,7 @@ public class TransferProducerServiceIntegrationTest {
     private static final BigDecimal AMOUNT = new BigDecimal("250.00");
     private static final String CURRENCY = "PLN";
     private static final Duration POLL_TIMEOUT = Duration.ofSeconds(10);
+
     @Autowired
     private TransferProducerService transferProducerService;
 
