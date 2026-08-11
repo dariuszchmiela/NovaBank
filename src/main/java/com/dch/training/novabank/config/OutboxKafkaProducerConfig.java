@@ -5,6 +5,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
@@ -18,6 +19,14 @@ public class OutboxKafkaProducerConfig {
 
     public OutboxKafkaProducerConfig(KafkaProperties kafkaProperties) {
         this.kafkaProperties = kafkaProperties;
+    }
+
+    @Bean
+    @Primary
+    public KafkaTemplate<Object, Object> kafkaTemplate() {
+        Map<String, Object> properties = kafkaProperties.buildProducerProperties();
+        ProducerFactory<Object, Object> producerFactory = new DefaultKafkaProducerFactory<>(properties);
+        return new KafkaTemplate<>(producerFactory);
     }
 
     @Bean
