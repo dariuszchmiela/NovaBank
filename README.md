@@ -18,6 +18,8 @@ REST client → Producer → outbox table (same DB transaction) → poller → K
 - Apache Kafka (`spring-boot-starter-kafka`), KRaft mode (no ZooKeeper)
 - PostgreSQL + Liquibase (XML changelogs)
 - Testcontainers (Kafka + PostgreSQL) for integration tests
+- REST Assured for HTTP contract tests
+- GitHub Actions for CI
 
 ## Producer service
 
@@ -56,12 +58,20 @@ matters (the ledger insert) gives an effectively-exactly-once outcome without ne
     - Consumer: first delivery is persisted; a duplicate delivery is skipped while subsequent messages keep being
       processed
     - DLQ: a message that keeps failing ends up on the DLT topic
+- Contract test (REST Assured) — real HTTP calls against a running embedded server (`RANDOM_PORT`), verifying the actual
+  request/response contract of `POST /api/transfers`: success shape and status code, and the `ProblemDetail`
+  shape returned on validation failure
 
 Integration tests require a running Docker daemon.
 
 ```bash
 mvn test
 ```
+
+## CI
+
+GitHub Actions (`.github/workflows/ci.yml`) runs the full test suite — including the Testcontainers-based integration
+tests — on every push and pull request to `master`.
 
 ## Running locally
 
