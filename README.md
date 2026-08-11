@@ -1,14 +1,14 @@
 # NovaBank
 
 Demo project showing a bank transfer integration pattern over Apache Kafka, built as a technical proof of competency.
-Focus: reliable, idempotent event delivery — no double-booked transfers.
+Focus: reliable, idempotent event delivery — no double-booked, no lost transfers, even through a Kafka outage.
 
 ## Architecture
 
 ```
-REST client → Producer (validation) → Kafka topic → Consumer (idempotent) → PostgreSQL ledger
-                                                            │
-                                                            └─ on repeated failure → DLT
+REST client → Producer → outbox table (same DB transaction) → poller → Kafka topic → Consumer (idempotent) → PostgreSQL ledger
+                                                                                              │
+                                                                                              └─ on repeated failure → DLT
 ```
 
 ## Tech stack
@@ -21,28 +21,38 @@ REST client → Producer (validation) → Kafka topic → Consumer (idempotent) 
 
 ## Producer service
 
-- `POST /api/v1/transfers` — accepts a transfer request, validates it (`@Valid`), publishes a `TransferRequestedEvent`
-  to Kafka
+- `POST /api/v1/transfers` — accepts a transfer request, validates it (`@Valid`), builds a `TransferRequestedEvent`
 - **API versioning** via Spring's native request-header versioning (`X-API-Version`, defaults to `1`)
-- **Producer reliability**: `acks=all` + `enable.idempotence=true` — no message loss, no duplicate delivery on retry
-- **Partitioning**: events are keyed by `sourceAccountId`, guaranteeing ordering per account
 - **Error handling**: `@RestControllerAdvice` returns RFC 7807 `ProblemDetail` for validation failures
+- **Outbox pattern**: instead of publishing to Kafka directly, the event is serialized and saved to an `outbox_events`
+  table in the same database transaction as the REST request. The request succeeds as soon as the write is durable — it
+  no longer depends on Kafka being reachable at that moment
+- **Outbox publisher**: a scheduled poller (`OutboxPublisherScheduler`, configurable interval) reads unpublished rows
+  and publishes them with `acks=all` + `enable.idempotence=true`, keyed by `sourceAccountId` for per-account ordering. A
+  row is only marked published after Kafka confirms the write — a failed attempt is retried on the next poll, nothing is
+  lost
 
 ## Consumer service
 
 - `@KafkaListener` on the transfer-requested topic, manual offset acknowledgment (`ack-mode: manual_immediate` — offset
   only commits after successful processing)
 - **Idempotency**: insert-and-catch on a unique `transfer_id` constraint in PostgreSQL (`processed_transfers` table).
-  Duplicate deliveries are detected by the database itself, not application logic — no race condition window
-- **Dead-letter queue**: `DefaultErrorHandler` + `DeadLetterPublishingRecoverer` — 3 retries with a 1s backoff, then the
-  message is published to a dedicated DLT topic and the offset is committed, so a single bad message can't block the
-  partition indefinitely
+  Duplicate deliveries — from Kafka retries or from the outbox poller re-sending after a late confirmation — are
+  detected by the database itself, not application logic — no race condition window
+- **Dead-letter queue**: `ErrorHandlingDeserializer` + `DefaultErrorHandler` + `DeadLetterPublishingRecoverer` — a
+  message that fails to deserialize *or* fails processing gets 3 retries with a 1s backoff, then is published to a
+  dedicated DLT topic and the offset is committed, so one bad message can't block the partition indefinitely
+
+## Reliability, end to end
+
+At-least-once delivery at every hop (outbox → Kafka → consumer) combined with idempotent processing at the point that
+matters (the ledger insert) gives an effectively-exactly-once outcome without needing a distributed transaction.
 
 ## Tests
 
-- Unit test — mocked `KafkaTemplate`, verifies event construction and publish call
+- Unit test — mocked repository, verifies the event is correctly built and saved to the outbox
 - Integration tests (real Kafka + real PostgreSQL via Testcontainers):
-    - Producer: event is actually delivered to the topic
+    - Producer → outbox → poller: event is actually delivered to the topic
     - Consumer: first delivery is persisted; a duplicate delivery is skipped while subsequent messages keep being
       processed
     - DLQ: a message that keeps failing ends up on the DLT topic
@@ -63,8 +73,3 @@ docker compose up -d
 ```
 
 Then run the application from your IDE — no extra configuration needed.
-
-## Coming next
-
-- Outbox pattern (Producer) — atomic persist-and-publish, so a transfer request survives a Kafka outage instead of being
-  lost
