@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Properties;
 
@@ -68,11 +69,15 @@ class TransferProducerServiceIntegrationTest extends AbstractIntegrationTest {
     }
 
     private ConsumerRecord<String, String> pollForRecordWithKey(String expectedKey) {
-        ConsumerRecords<String, String> records = testConsumer.poll(POLL_TIMEOUT);
+        Instant deadline = Instant.now().plus(POLL_TIMEOUT);
 
-        for (ConsumerRecord<String, String> record : records.records(kafkaTopicsProperties.transferRequested())) {
-            if (expectedKey.equals(record.key())) {
-                return record;
+        while (Instant.now().isBefore(deadline)) {
+            ConsumerRecords<String, String> records = testConsumer.poll(Duration.ofSeconds(1));
+
+            for (ConsumerRecord<String, String> record : records.records(kafkaTopicsProperties.transferRequested())) {
+                if (expectedKey.equals(record.key())) {
+                    return record;
+                }
             }
         }
 
