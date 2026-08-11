@@ -1,4 +1,4 @@
-package com.dch.training.novabank.service;
+package com.dch.training.novabank.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
