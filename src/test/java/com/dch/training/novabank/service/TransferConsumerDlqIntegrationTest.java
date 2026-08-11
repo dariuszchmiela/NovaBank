@@ -32,7 +32,7 @@ class TransferConsumerDlqIntegrationTest extends AbstractIntegrationTest {
     private static final Duration POLL_TIMEOUT = Duration.ofSeconds(15);
 
     @Autowired
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    private KafkaTemplate<Object, Object> kafkaTemplate;
 
     @Autowired
     private KafkaTopicsProperties kafkaTopicsProperties;

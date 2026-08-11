@@ -25,7 +25,7 @@ class TransferConsumerServiceIntegrationTest extends AbstractIntegrationTest {
     private static final Duration AWAIT_TIMEOUT = Duration.ofSeconds(10);
 
     @Autowired
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    private KafkaTemplate<Object, Object> kafkaTemplate;
 
     @Autowired
     private KafkaTopicsProperties kafkaTopicsProperties;
