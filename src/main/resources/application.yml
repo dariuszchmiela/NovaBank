@@ -30,3 +30,6 @@ novabank:
     topics:
       transfer-requested: bank.transfers.requested
       transfer-requested-dlt: bank.transfers.requested.dlt
+  outbox:
+    poll-interval-ms: 1000
+    publish-timeout-seconds: 5
