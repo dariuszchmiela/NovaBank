@@ -31,17 +31,23 @@ public class TransferConsumerService {
     }
 
     private void processTransfer(TransferRequestedEvent event) {
+        UUID transferId = UUID.fromString(event.transferId());
+
         try {
-            processedTransferRepository.save(toEntity(event));
+            processedTransferRepository.save(toEntity(event, transferId));
             log.info("Processed transferId={} sourceAccountId={}", event.transferId(), event.sourceAccountId());
         } catch (DataIntegrityViolationException exception) {
-            log.info("Skipping duplicate transferId={} — already processed", event.transferId());
+            if (processedTransferRepository.existsById(transferId)) {
+                log.info("Skipping duplicate transferId={} — already processed", event.transferId());
+            } else {
+                throw exception;
+            }
         }
     }
 
-    private ProcessedTransfer toEntity(TransferRequestedEvent event) {
+    private ProcessedTransfer toEntity(TransferRequestedEvent event, UUID transferId) {
         return new ProcessedTransfer(
-                UUID.fromString(event.transferId()),
+                transferId,
                 event.sourceAccountId(),
                 event.targetAccountId(),
                 event.amount(),
